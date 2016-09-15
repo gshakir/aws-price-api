@@ -5,13 +5,13 @@
     name: "{{ aws_lambda_function_name}}"
     publish: True
     description: AWS Price API Lambda function
-    code_s3_bucket: "{{ code_bucket }}"
+    code_s3_bucket: "{{ price_api_lambda_bucket_name }}"
     code_s3_key: "lambda/{{ deployment_package }}"
     local_path: "{{ project_folder }}/{{ deployment_package }}"
     runtime: node
     timeout: 10
     handler: lambda.handler
     memory_size: 192
-    role: "{{ iam_exec_role }}"
+    role: "{{ aws_lambda_role }}"
   register: lambda_results
       

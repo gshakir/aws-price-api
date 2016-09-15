@@ -9,7 +9,7 @@
         "s3:ListBucketVersions"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::{{ es_backup_s3_bucket_name }}"
+      "Resource": "arn:aws:s3:::{{ price_api_lambda_bucket_name }}"
     },
     {
       "Action": [
@@ -20,7 +20,7 @@
         "s3:ListMultipartUploadParts"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::{{ es_backup_s3_bucket_name }}/*"
+      "Resource": "arn:aws:s3:::{{ price_api_lambda_bucket_name }}/*"
     }
   ]
 }

@@ -1,9 +1,0 @@
----
-- name: Topic for price changes and subscribe to Lambda
-  sns_topic:
-    name: arn:aws:sns:us-east-1:278350005181:price-list-api
-    state: present
-    display_name: "{{ aws_sns_display_name}}"
-    subscriptions:
-      - endpoint: {{'arn:aws:lambda:' + aws_region ':' + aws_account_id + ':function:' + aws_lambda_function }}"
-      - protocol: lambda

@@ -1,0 +1,14 @@
+---
+- name: Ensure role exists
+  iam:
+    iam_type: role
+    name: "{{ aws_lambda_role }}"
+    state: present
+
+- name: Ensure policy exists
+  iam_policy:
+    iam_type: role
+    iam_name: "{{ aws_lambda_role }}"
+    policy_name: PriceApiLambdaRolePolicy
+    state: present
+    policy_json: "{{ lookup( 'template', 'price-api-lambda-role-policy.json.j2', convert_data=False) }}"
