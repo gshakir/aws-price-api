@@ -12,13 +12,13 @@ fs.readdirSync('node_modules')
   });
 
 module.exports = {
-  entry: './src/lambda.js',
+  entry:  { lambda: ['babel-polyfill', './src/lambda.js' ] } ,
   target: 'node',
   output: {
     library: "[name]",
     libraryTarget: "commonjs2",
     path: path.join(__dirname, 'build'),
-    filename: 'lambdabundle.js'
+    filename: "[name].js"
   },
   module: {
     loaders: [
@@ -28,20 +28,12 @@ module.exports = {
           loader: 'babel', 
           query: { babelrc: false, presets: ['babel-preset-es2015', 'babel-preset-es2016', 'babel-preset-stage-3'] }
       },
-    ],
-    postLoaders: [
-        {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loaders: ['file', 'zip-it']
-        },
+      { test: /\.json$/, loader: 'json-loader' }
     ]
   },
-  externals: nodeModules,
+  //externals: nodeModules,
   plugins: [
     new webpack.IgnorePlugin(/\.(css|less)$/),
-    new webpack.BannerPlugin('require("source-map-support").install();',
-                             { raw: true, entryOnly: false })
   ],
-  devtool: 'sourcemap'
+  //devtool: 'sourcemap'
 }
