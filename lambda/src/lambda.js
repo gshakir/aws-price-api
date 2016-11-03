@@ -19,7 +19,10 @@ export async function myHandler(ev1, context) {
     const waitForAll = await Promise.all(promises);
 
     console.log("Hello from lambda end");
-    promises[0].then(r => console.log(r.data.products));
+    promises[0].then(r => { 
+                        console.log("Promise data");
+                        console.log(r.get('US West \(Oregon\)').get('Standard'));
+                    });
 }
 
 
