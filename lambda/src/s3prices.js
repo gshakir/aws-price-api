@@ -2,20 +2,57 @@ import fs from 'fs'
 
 export function parseS3Prices(data) {
     console.log('S3 Products');
-    let pricesByRegion = {}
+    let storagePricesByRegion = {}
+    let dataTransferPricesByRegion = {}
 
     for (let [sku, detail] of Object.entries(data.products)) {
-        if (detail.productFamily != 'Storage') 
-            continue;
-        parseS3StoragePrices(sku, detail, pricesByRegion);
-        populatePriceDimensions(data, pricesByRegion);
+        if (detail.productFamily === 'Storage') {
+            parseS3StoragePrices(sku, detail, storagePricesByRegion);
+            populatePriceDimensions(data, storagePricesByRegion);
+        }
+        if (detail.productFamily === 'Data Transfer') {
+            parseS3DataTransferPrices(sku, detail, dataTransferPricesByRegion);
+            populatePriceDimensions(data, dataTransferPricesByRegion);
+        }
     }
-    fs.writeFileSync('s3storage.json', JSON.stringify(pricesByRegion,null, 4));
-    return pricesByRegion;
+    fs.writeFileSync('s3storage.json', JSON.stringify(storagePricesByRegion,null, 4));
+    fs.writeFileSync('s3datatransfer.json', JSON.stringify(dataTransferPricesByRegion,null, 4));
+    return storagePricesByRegion;
 }
 
 
 function parseS3DataTransferPrices(sku, detail, pricesByRegion) {
+    const pf = detail.productFamily;
+    const transferType = detail.attributes.transferType;
+    let region = detail.attributes.fromLocation;
+    let destination = detail.attributes.toLocation;
+
+    if (region === 'External') {
+        region = detail.attributes.toLocation;
+        destination = detail.attributes.fromLocation;
+    }
+
+    const item =  {sku: sku, pf: pf, destination: destination,
+                    region: region, transferType: transferType};
+
+    let regionPrices = {}
+    let regionPricesByTransferType = []
+    if (pricesByRegion.hasOwnProperty(region)) {
+        regionPrices = pricesByRegion[region]
+    }
+    else {
+        pricesByRegion[region] = regionPrices;
+
+    }
+
+    if (regionPrices.hasOwnProperty(transferType)) {
+        regionPricesByTransferType = regionPrices[transferType];
+    }
+    else {
+        regionPrices[transferType] = regionPricesByTransferType;
+    }
+
+    regionPricesByTransferType.push(item)
 }
 
 function parseS3StoragePrices(sku, detail, pricesByRegion) {
